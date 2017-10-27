@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IEEE 754</title>
+    <style>
+        body
+        {
+            margin:0px;
+            padding:0px;
+            background-color: #f8eee7;
+
+        }
+        #container
+        {
+            margin: 20vh 30vw 0 20vw;
+            border:1px solid black;
+            padding:20px 100px;
+            background-color: #94618e;
+            color: whitesmoke;
+            height:60vh;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+        input
+        {
+            width:300px;
+        }
+        .second
+        {
+            margin-top: 60px;
+        }
+        #ans1,#ans2
+        {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 style="text-align: center;">IEEE 754 floating point converter</h1>
+        <h4>Decimal to IEEE 754 floating point conversion</h4>
+        <input type="number" id="d_f">
+        <button type="button" value="Convert" id="but1" onclick="func()">Convert</button>
+        <div id="ans1"></div>
+        <h4 class="second">IEEE 754 floating point to Decimal conversion</h4>
+        <input type="number" id="f_d">
+        <button type="button" value="Convert" id="but2" onclick="funcun()">Convert</button>
+        <div id="ans2"></div>
+    </div>
+    <h1 style="text-align: center">DONE BY K. VIKRAME VASUDEV</h1>
+    <script>
+        function funcun()
+        {
+            var a=document.getElementById("f_d").value; //number
+            if((a.toString()).length<32||(a.toString()).length>32)
+            {
+                alert("Enter 32 bit number");
+            }
+            else {
+                var x = '';
+                if (a.toString()[0] == 0) {
+                    x = '+';
+                }
+                else {
+                    x = '-';
+                }
+                a = a.toString().slice(1, a.length);
+                var exp = a.slice(0, 8);
+                var mantissa = a.slice(8, a.length);
+                var E = 0;
+                var j = 7;
+                for (var i = 0; i < exp.length; i++)
+                {
+                    E+=Number(exp[i]*Math.pow(2,j));
+                    j=j-1;
+                }
+                e=E-127;
+                var i_p='1'+mantissa.slice(0,e);
+                var d_p=mantissa.slice(e,mantissa.length);
+                var i_n=0;
+                var d_n=0;
+                for(var i=0;i<i_p.length;i++)
+                {
+                    i_n+=Number(i_p[i]*Math.pow(2,i_p.length-1-i));
+                }
+                for(i=0;i<d_p.length;i++)
+                {
+                    d_n+=Number(d_p[i]*Math.pow(2,-(i+1)));
+                }
+                var num=x+(i_n+d_n).toString();
+                document.getElementById('ans2').innerHTML='Decimal no: '+num;
+                console.log(num);
+            }
+        }
+        function func()
+        {
+            var a=document.getElementById("d_f").value; //number
+            var x;
+            if(a>0)
+            {
+                x=0;      //sign bit
+            }
+            else
+            {
+                x=1;
+                a*=-1;
+            }
+            var num=Math.floor(a);
+            var dec=a-Math.floor(a);
+            var rem='';
+            while(num>=1)
+            {
+                var y=Math.floor(num/2);
+                rem+=(num%2).toString();
+                num=y;
+            }
+            rem=rem.split("").reverse().join("");
+            var i=8;
+            var rem1='';
+            while(i>=1)
+            {
+                i-=1;
+                dec=dec*2;
+                rem1+=(Math.floor(dec)).toString();
+                dec=dec-Math.floor(dec);
+            }
+            var fp=rem+rem1;
+            var E=127+rem.length-1;
+            var rem='';
+            while(E>=1)
+            {
+                var y=Math.floor(E/2);
+                rem+=(E%2).toString();
+                E=y;
+            }
+            rem=rem.split("").reverse().join("");
+            fp=fp.slice(1,fp.length);
+            while(fp.length<23) {
+                fp += '0';
+            }
+            //console.log(x,rem,fp);
+            document.getElementById("ans1").innerHTML='IEEE 754 floating point single precision:'+'<br>'+x.toString()+' '+rem+' '+fp+''+'<br><br>'+'Sign bit:'+x+'<br>'+'Exponent: '+rem+'<br>'+'Mantissa: '+fp;
+        }
+
+    </script>
+</body>
+</html>
